@@ -1,0 +1,15 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ghost_account_actions
+spec:
+  schedule: "0 6 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: ghost_accounts_deletion
+            image: $REPO_NAME/$IMAGE_NAME:latest
+            imagePullPolicy: IfNotPresent
+          restartPolicy: OnFailure
