@@ -1,0 +1,24 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  IMAGE_NAME: "ghost_accounts_actions"
+  K8S_NAMESPACE: "ghost_accounts"
+  CRONJOB_NAME: "ghost-account-deletion-cronjob"
+
+build:
+  stage: build
+  script:
+    - docker build -t $IMAGE_NAME .
+    - docker tag $IMAGE_NAME $REPO_NAME/$IMAGE_NAME
+    - docker push $REPO_NAME/$IMAGE_NAME
+
+deploy:
+  stage: deploy
+  image: google/cloud-sdk:latest
+  script:
+    - echo "Deploying to Kubernetes cluster..."
+    - kubectl apply -f cronjob.yaml --namespace=$K8S_NAMESPACE
+  only:
+    - main
